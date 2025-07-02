@@ -39,7 +39,7 @@ export async function removeContact(contactId) {
 
 export async function addContact(name, email, phone) {
   // Повертає об'єкт доданого контакту (з id).
-  const contacts = await listContacts();
+  const contactsList = await listContacts();
 
   const newContact = {
     id: randomUUID(),
@@ -49,6 +49,21 @@ export async function addContact(name, email, phone) {
   };
 
   contacts.push(newContact);
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+  await fs.writeFile(contactsPath, JSON.stringify(contactsList, null, 2));
   return newContact;
+}
+
+export async function updateContactService(id, updates) {
+  const contactsList = await listContacts();
+  const index = contactsList.findIndex((c) => c.id === id);
+
+  if (index === -1) {
+    return null;
+  }
+
+  const updatedContact = { ...contactsList[index], ...updates };
+  contactsList[index] = updatedContact;
+
+  await fs.writeFile(contactsPath, JSON.stringify(contactsList, null, 2));
+  return updatedContact;
 }

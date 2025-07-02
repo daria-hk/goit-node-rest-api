@@ -15,4 +15,18 @@ export const contactSchema = Joi.object({
   }),
 });
 
-export const updateContactSchema = Joi.object({});
+export const updateContactSchema = Joi.object({
+  name: Joi.string().min(1).messages({
+    "string.min": `"name" can't be empty`,
+  }),
+  email: Joi.string().email().messages({
+    "string.email": `"email" must be valid`,
+  }),
+  phone: Joi.string().min(5).messages({
+    "string.min": `"phone" must be at least 5 characters`,
+  }),
+})
+  .min(1)
+  .messages({
+    "object.min": "At least one field (name, email, or phone) must be provided",
+  });
