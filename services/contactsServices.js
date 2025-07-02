@@ -21,7 +21,7 @@ export async function getContactById(contactId) {
 }
 
 export async function removeContact(contactId) {
-  const contact = await getContactById(contactId);
+  const contact = await Contact.findByPk(contactId);
   if (!contact) return null;
   contact.destroy();
   return contact;
@@ -32,8 +32,8 @@ export async function addContact(name, email, phone) {
   return newContact;
 }
 
-export async function updateContactService(id, updates) {
-  const contact = await getContactById(id);
+export async function updateContactService(contactId, updates) {
+  const contact = await Contact.findByPk(contactId);
   if (!contact) return null;
   contact.update(updates);
   return contact;
