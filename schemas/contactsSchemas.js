@@ -30,3 +30,10 @@ export const updateContactSchema = Joi.object({
   .messages({
     "object.min": "At least one field (name, email, or phone) must be provided",
   });
+
+export const updateStatusSchema = Joi.object({
+  favorite: Joi.boolean().required().messages({
+    "any.required": `"favorite" field is required`,
+    "boolean.base": `"favorite" must be a boolean value`,
+  }),
+});

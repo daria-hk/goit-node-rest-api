@@ -38,3 +38,17 @@ export async function updateContactService(id, updates) {
   contact.update(updates);
   return contact;
 }
+
+export async function updateStatusContact(req, res) {
+  const { id } = req.params;
+  const { favorite } = req.body;
+  if (Object.keys(req.body).length === 0)
+    throw HttpError(400, "Body must have at least field 'favorite'");
+  const updatedFavorite = await changeFavorite(id, { favorite });
+
+  if (!updatedFavorite) {
+    throw HttpError(404, "Not found");
+  }
+
+  res.status(200).json(updatedFavorite);
+}

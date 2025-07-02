@@ -6,6 +6,8 @@ import {
   updateContactService,
 } from "../services/contactsServices.js";
 
+import Contact from "../db/contacts.js";
+
 export const getAllContacts = async (_, res) => {
   const contacts = await listContacts();
   res.status(200).json(contacts);
@@ -62,10 +64,27 @@ export const updateContact = async (req, res) => {
   res.status(200).json(updatedContact);
 };
 
+export const updateStatusContact = async (req, res) => {
+  const { id } = req.params;
+  const { favorite } = req.body;
+
+  const contact = await Contact.findByPk(id);
+
+  if (!contact) {
+    return res.status(404).json({ message: "Not found" });
+  }
+
+  contact.favorite = favorite;
+  await contact.save();
+
+  res.status(200).json(contact);
+};
+
 export default {
   getAllContacts,
   getOneContact,
   deleteContact,
   createContact,
   updateContact,
+  updateStatusContact,
 };
