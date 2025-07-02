@@ -4,6 +4,7 @@ import {
   removeContact,
   addContact,
   updateContactService,
+  updateStatusContactService,
 } from "../services/contactsServices.js";
 
 import Contact from "../db/contacts.js";
@@ -68,16 +69,17 @@ export const updateStatusContact = async (req, res) => {
   const { id } = req.params;
   const { favorite } = req.body;
 
-  const contact = await Contact.findByPk(id);
+  if (typeof favorite !== "boolean") {
+    return res.status(400).json({ message: "Missing field 'favorite'" });
+  }
 
-  if (!contact) {
+  const updatedContact = await updateStatusContactService(id, favorite);
+
+  if (!updatedContact) {
     return res.status(404).json({ message: "Not found" });
   }
 
-  contact.favorite = favorite;
-  await contact.save();
-
-  res.status(200).json(contact);
+  res.status(200).json(updatedContact);
 };
 
 export default {
