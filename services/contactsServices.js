@@ -1,14 +1,4 @@
-import fs from "fs/promises";
-import path from "path";
-import { randomUUID } from "crypto";
-import { fileURLToPath } from "url";
-import { dirname } from "path";
 import Contact from "../db/contacts.js";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const contactsPath = path.join(__dirname, "..", "db", "contacts.json");
 
 export async function listContacts() {
   const contactsList = await Contact.findAll();

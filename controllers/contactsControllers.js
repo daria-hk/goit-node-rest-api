@@ -7,8 +7,6 @@ import {
   updateStatusContactService,
 } from "../services/contactsServices.js";
 
-import Contact from "../db/contacts.js";
-
 export const getAllContacts = async (_, res) => {
   const contacts = await listContacts();
   res.status(200).json(contacts);
