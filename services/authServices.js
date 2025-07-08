@@ -10,7 +10,6 @@ export const findUser = (query) =>
 
 export const registerUser = async (payload) => {
   const hashPassword = await bcrypt.hash(payload.password, 10);
-
   return User.create({ ...payload, password: hashPassword });
 };
 
@@ -51,6 +50,16 @@ export const changeSubscription = async (userId, subscription) => {
   if (!user) throw HttpError(404, "User not found");
 
   user.subscription = subscription;
+  await user.save();
+
+  return user;
+};
+
+export const changeAvatar = async (userId, avatar) => {
+  const user = await findUser({ id: userId });
+  if (!user) throw HttpError(404, "User not found");
+
+  user.avatarURL = avatar;
   await user.save();
 
   return user;

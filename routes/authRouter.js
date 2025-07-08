@@ -4,11 +4,13 @@ import { authSchema } from "../schemas/authSchemas.js";
 import { subscriptionSchema } from "../schemas/subscriptionSchema.js";
 import authController from "../controllers/authController.js";
 import authenticate from "../midleware/authenticate.js";
+import upload from "../midleware/upload.js";
 
 const authRouter = express.Router();
 
 authRouter.post(
   "/register",
+  upload.single("avatar"),
   validateBody(authSchema),
   authController.registerController
 );
@@ -30,4 +32,10 @@ authRouter.patch(
   authController.subscriptionController
 );
 
+authRouter.patch(
+  "/avatars",
+  upload.single("avatar"),
+  authenticate,
+  authController.avatarsController
+);
 export default authRouter;

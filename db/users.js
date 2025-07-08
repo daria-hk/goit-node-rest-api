@@ -3,6 +3,11 @@ import sequelize from "./sequelize.js";
 import { emailRgxp, passRgxp } from "../constants/auth.js";
 
 const User = sequelize.define("user", {
+  id: {
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    primaryKey: true,
+  },
   password: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -27,6 +32,7 @@ const User = sequelize.define("user", {
     type: DataTypes.STRING,
     defaultValue: null,
   },
+  avatarURL: { type: DataTypes.STRING, allowNull: true },
 });
 
 User.sync();
