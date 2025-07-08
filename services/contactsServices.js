@@ -1,36 +1,50 @@
 import Contact from "../db/contacts.js";
+import { Op } from "sequelize";
 
-export async function listContacts() {
-  const contactsList = await Contact.findAll();
+export async function listContacts(ownerId) {
+  const contactsList = await Contact.findAll({ where: { owner: ownerId } });
   return contactsList;
 }
 
-export async function getContactById(contactId) {
-  const contact = await Contact.findByPk(contactId);
+export async function getContactById(contactId, ownerId) {
+  const contact = await Contact.findOne({
+    where: { id: contactId, owner: ownerId },
+  });
   return contact || null;
 }
 
-export async function removeContact(contactId) {
-  const contact = await Contact.findByPk(contactId);
+export async function removeContact(contactId, ownerId) {
+  const contact = await Contact.findOne({
+    where: { id: contactId, owner: ownerId },
+  });
   if (!contact) return null;
-  contact.destroy();
+  await contact.destroy();
   return contact;
 }
 
-export async function addContact(name, email, phone) {
-  const newContact = await Contact.create({ name, email, phone });
+export async function addContact(name, email, phone, ownerId) {
+  const newContact = await Contact.create({
+    name,
+    email,
+    phone,
+    owner: ownerId,
+  });
   return newContact;
 }
 
-export async function updateContactService(contactId, updates) {
-  const contact = await Contact.findByPk(contactId);
+export async function updateContactService(contactId, updates, ownerId) {
+  const contact = await Contact.findOne({
+    where: { id: contactId, owner: ownerId },
+  });
   if (!contact) return null;
-  contact.update(updates);
+  await contact.update(updates);
   return contact;
 }
 
-export async function updateStatusContactService(contactId, favorite) {
-  const contact = await Contact.findByPk(contactId);
+export async function updateStatusContactService(contactId, favorite, ownerId) {
+  const contact = await Contact.findOne({
+    where: { id: contactId, owner: ownerId },
+  });
   if (!contact) return null;
 
   contact.favorite = favorite;
