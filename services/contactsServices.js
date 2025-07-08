@@ -1,5 +1,4 @@
 import Contact from "../db/contacts.js";
-import { Op } from "sequelize";
 
 export async function listContacts(ownerId) {
   const contactsList = await Contact.findAll({ where: { owner: ownerId } });
