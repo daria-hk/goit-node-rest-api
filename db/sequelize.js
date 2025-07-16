@@ -2,7 +2,7 @@ import { Sequelize } from "sequelize";
 import dotenv from "dotenv";
 dotenv.config();
 
-console.log(process.env.DATABASE_DIALECT);
+//console.log(process.env.DATABASE_DIALECT);
 
 const sequelize = new Sequelize({
   dialect: process.env.DATABASE_DIALECT,

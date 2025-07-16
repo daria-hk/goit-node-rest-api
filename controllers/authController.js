@@ -6,6 +6,8 @@ import {
   logoutUser,
   changeSubscription,
   changeAvatar,
+  verifyUser,
+  resendVerifyUser,
 } from "../services/authServices.js";
 import { resolve, join } from "node:path";
 import fs from "fs/promises";
@@ -90,6 +92,27 @@ const avatarsController = async (req, res, next) => {
   }
 };
 
+const verifyUserEmail = async (req, res) => {
+  const { verificationToken } = req.params;
+
+  await verifyUser(verificationToken);
+
+  res.status(200).json({ message: "Verification successful" });
+};
+
+const resendVerificationEmail = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    throw HttpError(400, "Missing required field email");
+  }
+
+  await resendVerifyUser(email);
+  res.json({
+    message: "Verification email sent",
+  });
+};
+
 export default {
   registerController: controllerWrapper(registerController),
   loginController: controllerWrapper(loginController),
@@ -97,4 +120,6 @@ export default {
   logoutController: controllerWrapper(logoutController),
   subscriptionController: controllerWrapper(subscriptionController),
   avatarsController: controllerWrapper(avatarsController),
+  verifyUserEmail: controllerWrapper(verifyUserEmail),
+  resendVerificationEmail: controllerWrapper(resendVerificationEmail),
 };

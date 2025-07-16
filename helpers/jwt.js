@@ -4,7 +4,7 @@ const { JWT_SECRET } = process.env;
 
 export const createToken = (payload) =>
   jwt.sign(payload, JWT_SECRET, { expiresIn: "24h" });
-console.log(JWT_SECRET);
+console.log("JWT_SECRET", JWT_SECRET);
 
 export const verifyToken = (token) => {
   try {

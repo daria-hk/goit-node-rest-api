@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import sequelize from "./sequelize.js";
 import { emailRgxp, passRgxp } from "../constants/auth.js";
+import gravatar from "gravatar";
 
 const User = sequelize.define("user", {
   id: {
@@ -33,8 +34,15 @@ const User = sequelize.define("user", {
     defaultValue: null,
   },
   avatarURL: { type: DataTypes.STRING, allowNull: true },
+  verify: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  verificationToken: {
+    type: DataTypes.STRING,
+  },
 });
 
-User.sync();
+User.sync({ alter: true });
 
 export default User;

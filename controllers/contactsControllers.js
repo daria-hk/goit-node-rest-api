@@ -57,7 +57,7 @@ export const updateContact = async (req, res) => {
       .json({ message: "Body must have at least one field" });
   }
 
-  console.log("Updates received:", updates);
+  // console.log("Updates received:", updates);
 
   const updatedContact = await updateContactService(id, updates, ownerId);
 

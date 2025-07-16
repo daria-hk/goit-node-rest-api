@@ -2,6 +2,12 @@ import User from "../db/users.js";
 import bcrypt from "bcrypt";
 import HttpError from "../helpers/HttpError.js";
 import { createToken } from "../helpers/jwt.js";
+import { nanoid } from "nanoid";
+import gravatar from "gravatar";
+
+import sendVarificationEmail from "../helpers/sendVerificationEmail.js";
+
+const { BASE_URL } = process.env;
 
 export const findUser = (query) =>
   User.findOne({
@@ -10,14 +16,50 @@ export const findUser = (query) =>
 
 export const registerUser = async (payload) => {
   const hashPassword = await bcrypt.hash(payload.password, 10);
-  return User.create({ ...payload, password: hashPassword });
+  const verificationToken = nanoid();
+  const avatarURL = gravatar.url(payload.email);
+  const { email } = payload;
+  const verifyEmail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a target="_blank" href="${BASE_URL}/api/auth/verify/${verificationToken}">Click verify email</a>`,
+  };
+
+  await sendVarificationEmail(verifyEmail);
+  return User.create({
+    ...payload,
+    password: hashPassword,
+    avatarURL,
+    verificationToken,
+  });
+};
+
+export const verifyUser = async (verificationToken) => {
+  const user = await findUser({ verificationToken });
+  if (!user) throw HttpError(404, "User not found");
+
+  return user.update({ verify: true, verificationToken: null });
+};
+
+export const resendVerifyUser = async (email) => {
+  const user = await findUser({ email });
+  if (!user) throw HttpError(404, "User not found");
+
+  if (user.verify) {
+    throw HttpError(400, "Verification has already been passed");
+  }
+
+  const verifyEmail = createVerifyEmail(email, user.verificationToken);
+
+  await sendVarificationEmail(verifyEmail);
 };
 
 export const loginUser = async ({ email, password }) => {
   const user = await User.findOne({
     where: { email },
   });
-  if (!user) throw HttpError(401, "Email or password is wrong");
+
+  if (!user.verify) throw HttpError(401, "Email not verified");
 
   const pass = await bcrypt.compare(password, user.password);
   if (!pass) throw HttpError(401, "Email or password is wrong");
